@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh" id="htmlRoot">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>通讯录</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style id="themeStyles">
+    :root {
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --border: #e5e7eb;
+      --primary: #3b82f6;
+      --primary-light: #dbeafe;
+      --success: #10b981;
+      --danger: #ef4444;
+      --radius: 12px;
+      --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dark-mode {
+      --bg: #111827;
+      --surface: #1f2937;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --border: #374151;
+      --primary: #60a5fa;
+      --primary-light: #1e3a8a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 24px 16px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .title-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .title-icon {
+      width: 32px;
+      height: 32px;
+      color: var(--primary);
+    }
+
+    h1 {
+      font-weight: 600;
+      font-size: 26px;
+      letter-spacing: -0.3px;
+      margin: 0;
+    }
+
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    #themeToggle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    #themeToggle:hover {
+      transform: scale(1.08);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 16px;
+      background: var(--surface);
+      color: var(--text-primary);
+      outline: none;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    #searchInput:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    #stats {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .form-group input {
+      flex: 1;
+      min-width: 140px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 16px;
+      background: var(--surface);
+      color: var(--text-primary);
+      transition: var(--transition);
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+    }
+
+    .favorite-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      padding: 0;
+      margin-left: 6px;
+    }
+
+    .favorite-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .message {
+      padding: 14px;
+      margin: 20px 0;
+      border-radius: var(--radius);
+      text-align: center;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .message.success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .contact-list {
+      list-style: none;
+    }
+
+    .group-title {
+      margin-top: 28px;
+      margin-bottom: 12px;
+      padding-left: 4px;
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--text-primary);
+      position: relative;
+    }
+
+    .group-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 20px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .contact-item {
+      background: var(--surface);
+      padding: 18px;
+      margin-bottom: 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .contact-item.favorite-highlight {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+    }
+
+    .contact-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .contact-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .contact-name {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .contact-detail {
+      color: var(--text-secondary);
+      font-size: 15px;
+      margin: 2px 0;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      opacity: 0.6;
+    }
+
+    .export-section {
+      text-align: center;
+      margin: 24px 0;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #favoritesSection {
+      margin-bottom: 32px;
+      display: none;
+    }
+
+    #favoritesSection h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 600px) {
+      .form-group { flex-direction: column; }
+      .contact-item { flex-direction: column; align-items: stretch; }
+      .btn-group { width: 100%; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <button id="themeToggle" onclick="toggleTheme()">🌙</button>
+    <div class="title-container">
+      <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      <h1>通讯录</h1>
+    </div>
+    <p class="tagline">轻松管理所有联系人</p>
+  </div>
+
+  <div class="search-container">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="搜索姓名、电话、邮箱或住址..." oninput="filterContacts()" />
+  </div>
+
+  <div id="stats">共 0 位联系人</div>
+
+  <div id="message" class="message"></div>
+
+  <!-- 我的收藏区域 -->
+  <div id="favoritesSection">
+    <h2>⭐ 我的收藏</h2>
+    <div id="favoritesList"></div>
+  </div>
+
+  <div class="form-group">
+    <input type="hidden" id="editId" />
+    <input type="text" id="name" placeholder="姓名 *" />
+    <input type="text" id="phone" placeholder="电话（可选）" />
+    <input type="email" id="email" placeholder="邮箱（可选）" />
+    <input type="text" id="address" placeholder="住址（可选）" />
+    <button class="btn btn-primary" onclick="saveContact()">💾 保存</button>
+    <button class="btn btn-outline" onclick="clearForm()">❌ 取消</button>
+  </div>
+
+  <div class="export-section">
+    <button class="btn btn-outline" onclick="document.getElementById('csvFile').click()">📥 导入 CSV</button>
+    <input type="file" id="csvFile" accept=".csv" style="display:none;" onchange="handleCsvImport(event)" />
+    <button class="btn btn-outline" onclick="exportToCSV()">📤 导出 CSV</button>
+  </div>
+
+  <ul id="contactList" class="contact-list"></ul>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:5000/contacts';
+    let allContacts = [];
+    let isDarkMode = false;
+
+    function initTheme() {
+      const saved = localStorage.getItem('darkMode') === 'true';
+      if (saved) {
+        document.getElementById('htmlRoot').classList.add('dark-mode');
+        document.getElementById('themeToggle').textContent = '☀️';
+        isDarkMode = true;
+      }
+    }
+
+    function toggleTheme() {
+      isDarkMode = !isDarkMode;
+      document.getElementById('htmlRoot').classList.toggle('dark-mode', isDarkMode);
+      document.getElementById('themeToggle').textContent = isDarkMode ? '☀️' : '🌙';
+      localStorage.setItem('darkMode', isDarkMode);
+    }
+
+    function showMessage(text, type) {
+      const el = document.getElementById('message');
+      el.textContent = text;
+      el.className = 'message ' + type;
+      void el.offsetWidth;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    function escapeHTML(str) {
+      return (str || '').replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+    }
+
+    function enrichContact(contact) {
+      const phone = contact.methods.find(m => m.type === 'phone')?.value || '';
+      const email = contact.methods.find(m => m.type === 'email')?.value || '';
+      const address = contact.methods.find(m => m.type === 'address')?.value || '';
+      return { ...contact, phone, email, address };
+    }
+
+    function renderContactItem(contact, isFavoriteSection = false) {
+      const enriched = enrichContact(contact);
+      let html = `
+        <div class="contact-item ${isFavoriteSection ? 'favorite-highlight' : ''}">
+          <div class="contact-info">
+            <div class="contact-name">
+              ${escapeHTML(enriched.name)}
+              ${!isFavoriteSection ? `<button class="favorite-btn" data-id="${enriched.id}">${enriched.is_favorite ? '⭐' : '☆'}</button>` : ' ⭐'}
+            </div>
+      `;
+      enriched.methods.forEach(m => {
+        let icon = '🔗';
+        if (m.type === 'phone') icon = '📞';
+        else if (m.type === 'email') icon = '✉️';
+        else if (m.type === 'address') icon = '🏠';
+        html += `<div class="contact-detail">${icon} ${escapeHTML(m.value)}</div>`;
+      });
+      html += `
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-outline" 
+              onclick="editContact(${enriched.id}, '${escapeHTML(enriched.name).replace(/'/g, "\\'")}', '${escapeHTML(enriched.phone).replace(/'/g, "\\'")}', '${escapeHTML(enriched.email).replace(/'/g, "\\'")}', '${escapeHTML(enriched.address).replace(/'/g, "\\'")}')" 
+              style="font-size: 14px; padding: 8px 12px;">
+              编辑
+            </button>
+            <button class="btn btn-danger" 
+              onclick="deleteContact(${enriched.id})" 
+              style="font-size: 14px; padding: 8px 12px;">
+              删除
+            </button>
+          </div>
+        </div>
+      `;
+      return html;
+    }
+
+    function loadFavorites() {
+      fetch(`${API_BASE}/favorites`)
+        .then(res => res.json())
+        .then(favorites => {
+          const section = document.getElementById('favoritesSection');
+          const listEl = document.getElementById('favoritesList');
+          if (favorites.length === 0) {
+            section.style.display = 'none';
+          } else {
+            section.style.display = 'block';
+            listEl.innerHTML = favorites.map(c => renderContactItem(c, true)).join('');
+          }
+        })
+        .catch(err => console.error('加载收藏失败:', err));
+    }
+
+    function loadContacts() {
+      fetch(API_BASE)
+        .then(res => res.json())
+        .then(contacts => {
+          allContacts = contacts.map(enrichContact);
+          displayContacts(allContacts);
+          updateStats(allContacts.length);
+        })
+        .catch(err => {
+          console.error('加载失败:', err);
+          showMessage('无法加载联系人，请检查后端是否运行', 'error');
+        });
+    }
+
+    function displayContacts(contacts) {
+      const list = document.getElementById('contactList');
+      if (contacts.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <p>暂无联系人</p>
+          </div>
+        `;
+        return;
+      }
+
+      const groups = {};
+      contacts.forEach(contact => {
+        const firstChar = contact.name.charAt(0).toUpperCase();
+        const letter = /[A-Z\u4e00-\u9fa5]/.test(firstChar) ? firstChar : '#';
+        if (!groups[letter]) groups[letter] = [];
+        groups[letter].push(contact);
+      });
+
+      const sortedKeys = Object.keys(groups).sort((a, b) => {
+        if (a === '#') return 1;
+        if (b === '#') return -1;
+        return a.localeCompare(b);
+      });
+
+      let html = '';
+      sortedKeys.forEach(key => {
+        html += `<li class="group-title">${key}</li>`;
+        groups[key].forEach(c => {
+          html += renderContactItem(c, false);
+        });
+      });
+
+      list.innerHTML = html;
+
+      // 绑定收藏按钮事件
+      document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          const id = this.getAttribute('data-id');
+          toggleFavorite(parseInt(id));
+        };
+      });
+    }
+
+    function filterContacts() {
+      const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!keyword) {
+        displayContacts(allContacts);
+        updateStats(allContacts.length);
+      } else {
+        const filtered = allContacts.filter(contact =>
+          contact.name.toLowerCase().includes(keyword) ||
+          contact.methods.some(m => m.value.toLowerCase().includes(keyword))
+        );
+        displayContacts(filtered);
+        updateStats(allContacts.length, filtered.length);
+      }
+    }
+
+    function updateStats(total, filtered = null) {
+      const statsEl = document.getElementById('stats');
+      if (filtered !== null && filtered !== total) {
+        statsEl.textContent = `共 ${total} 位联系人（匹配 ${filtered} 位）`;
+      } else {
+        statsEl.textContent = `共 ${total} 位联系人`;
+      }
+    }
+
+    // 导出 CSV（带 BOM）
+    function exportToCSV() {
+      if (allContacts.length === 0) {
+        showMessage('没有数据可导出', 'error');
+        return;
+      }
+
+      const bom = '\uFEFF';
+      let csv = bom + '姓名,电话,邮箱,住址\n';
+
+      allContacts.forEach(contact => {
+        const name = (contact.name || '').replace(/"/g, '""');
+        const phone = (contact.phone || '').replace(/"/g, '""');
+        const email = (contact.email || '').replace(/"/g, '""');
+        const address = (contact.address || '').replace(/"/g, '""');
+        csv += `"${name}","${phone}","${email}","${address}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '通讯录.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      showMessage('导出成功！可在 Excel 中正常查看中文', 'success');
+    }
+
+    // 导入 CSV
+    function handleCsvImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch(`${API_BASE}/import`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          showMessage(data.error, 'error');
+        } else {
+          showMessage(data.message, 'success');
+          loadContacts();
+          loadFavorites();
+        }
+      })
+      .catch(err => {
+        console.error('导入失败:', err);
+        showMessage('导入失败，请检查文件格式', 'error');
+      })
+      .finally(() => {
+        event.target.value = '';
+      });
+    }
+
+    function saveContact() {
+      const id = document.getElementById('editId').value;
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const address = document.getElementById('address').value.trim();
+
+      if (!name) {
+        showMessage('请填写姓名！', 'error');
+        return;
+      }
+
+      const methods = [];
+      if (phone) methods.push({ type: 'phone', value: phone });
+      if (email) methods.push({ type: 'email', value: email });
+      if (address) methods.push({ type: 'address', value: address });
+
+      if (methods.length === 0) {
+        showMessage('至少需要一个联系方式！', 'error');
+        return;
+      }
+
+      const url = id ? `${API_BASE}/${id}` : API_BASE;
+      const method = id ? 'PUT' : 'POST';
+
+      fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, address: address || null, methods })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('请求失败');
+        return res.json();
+      })
+      .then(() => {
+        clearForm();
+        loadContacts();
+        loadFavorites();
+        showMessage(id ? '修改成功！' : '添加成功！', 'success');
+      })
+      .catch(err => {
+        console.error(err);
+        showMessage('操作失败，请重试', 'error');
+      });
+    }
+
+    function editContact(id, name, phone = '', email = '', address = '') {
+      document.getElementById('editId').value = id;
+      document.getElementById('name').value = name;
+      document.getElementById('phone').value = phone;
+      document.getElementById('email').value = email;
+      document.getElementById('address').value = address;
+    }
+
+    function deleteContact(id) {
+      if (!confirm('确定要删除这个联系人吗？')) return;
+      fetch(`${API_BASE}/${id}`, { method: 'DELETE' })
+        .then(res => {
+          if (!res.ok) throw new Error('删除失败');
+          loadContacts();
+          loadFavorites();
+          showMessage('删除成功！', 'success');
+        })
+        .catch(() => showMessage('删除失败', 'error'));
+    }
+
+    function toggleFavorite(contactId) {
+      fetch(`${API_BASE}/${contactId}/favorite`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('操作失败');
+        return res.json();
+      })
+      .then(() => {
+        loadContacts();
+        loadFavorites();
+      })
+      .catch(err => {
+        console.error('收藏失败:', err);
+        showMessage('收藏操作失败', 'error');
+      });
+    }
+
+    function clearForm() {
+      document.getElementById('editId').value = '';
+      document.getElementById('name').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('address').value = '';
+    }
+
+    initTheme();
+    loadContacts();
+    loadFavorites();
+  </script>
+</body>
+</html>
