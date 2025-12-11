@@ -1,1 +1,3 @@
-# EE308FZ-Software_Engineeringf_ExtremePrograming
+#EE308FZ-Software_Engineering_ExtremePrograming
+该项目为EE308FZ极限编程项目作业，作者为刘志濠、朱晨赫
+该项目为一个能够实现联系人详细信息保存、收藏、信息Excel表格导入导出、搜索、编辑等功能在线系统，已经成功部署在云端
